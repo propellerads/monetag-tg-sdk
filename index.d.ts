@@ -13,6 +13,6 @@ interface AdHandlerOptions {
     }
 }
 
-export default function createAdHandler(zoneid: number) {
-    return (options: string|AdHandlerOptions) => Promise<void>
-}
+type adHandler = (options?: string|AdHandlerOptions) => Promise<void>
+
+export default function createAdHandler(zoneid: number): adHandler
