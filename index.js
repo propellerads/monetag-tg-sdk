@@ -41,7 +41,7 @@ export default function createAdHandler (zoneid) {
                     return reject(new Error(ERR_SCRIPT_LOAD))
                 }
 
-                cache.push(options, resolve, reject)
+                cache.push([options, resolve, reject])
             })
         }
 
