@@ -3,10 +3,15 @@ const ERR_SCRIPT_LOAD = 'Error communicating with the ad server'
 
 const SCRIPT_URL = '//yoszi.com/sdk.js'
 const MOUNT = typeof document !== 'undefined' ? document.body || document.documentElement : null
+const HANDLERS = {}
 
 export default function createAdHandler (zoneid) {
     if (!MOUNT) {
         throw new Error(ERR_NO_DOCUMENT)
+    }
+
+    if (HANDLERS[zoneid]) {
+        return HANDLERS[zoneid]
     }
 
     const script = document.createElement('script')
@@ -26,15 +31,7 @@ export default function createAdHandler (zoneid) {
         })
     }
 
-    script.src = SCRIPT_URL
-    script.dataset.zone = zoneid
-    script.dataset.sdk = handlerName
-
-    script.addEventListener('load', onLoad)
-    script.addEventListener('error', onLoad)
-    MOUNT.appendChild(script)
-
-    return (options) => {
+    const handler = (options) => {
         if (typeof window[handlerName] !== 'function') {
             return new Promise((resolve, reject) => {
                 if (loaded) {
@@ -47,4 +44,16 @@ export default function createAdHandler (zoneid) {
 
         return window[handlerName](options)
     }
+
+    script.src = SCRIPT_URL
+    script.dataset.zone = zoneid
+    script.dataset.sdk = handlerName
+
+    script.addEventListener('load', onLoad)
+    script.addEventListener('error', onLoad)
+    MOUNT.appendChild(script)
+
+    HANDLERS[zoneid] = handler
+
+    return handler
 }
