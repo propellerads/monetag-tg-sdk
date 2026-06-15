@@ -1,7 +1,7 @@
 const ERR_NO_DOCUMENT = 'monetag-tg-sdk only supports the browser environment'
 const ERR_SCRIPT_LOAD = 'Error communicating with the ad server'
 
-const SCRIPT_URL = '//yoszi.com/sdk.js'
+const SCRIPT_URL = ['/', process.env.DOMAIN, 'sdk.js'].join('/')
 const MOUNT = typeof document !== 'undefined' ? document.body || document.documentElement : null
 const HANDLERS = {}
 
@@ -16,7 +16,7 @@ export default function createAdHandler (zoneid) {
 
     const script = document.createElement('script')
     const handlerName = `show_${zoneid}`
-    const cache = []
+    const cache = [] as Array<[any, (value: any) => void, (reason?: any) => void]>
     let loaded = false
 
     const onLoad = () => {
